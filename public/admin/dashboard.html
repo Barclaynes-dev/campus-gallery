@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Campus Gallery</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+
+<body class="dashboard-body">
+
+  <!-- ── SIDEBAR ──────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__top">
+      <a href="/" class="sidebar__logo">
+        <span class="logo-dot"></span>
+        <span>Campus Gallery</span>
+      </a>
+      <button class="sidebar__close" id="sidebarClose" aria-label="Close sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="sidebar__role-badge">
+      <span class="role-dot role-dot--admin"></span>
+      <span>Admin</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      <ul>
+        <li>
+          <button class="sidebar__link sidebar__link--active" data-panel="gallery">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            Gallery
+          </button>
+        </li>
+        <li>
+          <button class="sidebar__link" data-panel="upload">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Upload Photo
+          </button>
+        </li>
+        <li>
+          <button class="sidebar__link" data-panel="users">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            Friends
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar__footer">
+      <a href="/" class="sidebar__ext-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        </svg>
+        Home Page
+      </a>
+      <a href="/gallery.html" class="sidebar__ext-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+        </svg>
+        View Gallery
+      </a>
+      <a href="/friend/dashboard.html" class="sidebar__ext-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        My Space (Favorites)
+      </a>
+      <button class="sidebar__ext-link sidebar__logout" data-action="logout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ── MAIN AREA ─────────────────────────────────────────── -->
+  <div class="dashboard-main" id="dashboardMain">
+
+    <!-- Top bar -->
+    <header class="dash-topbar">
+      <button class="dash-menu-btn" id="dashMenuBtn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="dash-topbar__title" id="dashTopbarTitle">Gallery</div>
+      <div class="dash-topbar__right">
+        <button class="theme-toggle" aria-label="Toggle theme"></button>
+        <div class="dash-user-chip" id="dashUserChip">
+          <span class="role-dot role-dot--admin"></span>
+          <span id="dashUserName">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL: GALLERY MANAGEMENT
+    ══════════════════════════════════════════════════════ -->
+    <section class="dash-panel" id="panel-gallery">
+      <div class="dash-panel__header">
+        <div>
+          <h2>Gallery Management</h2>
+          <p>All uploaded photos. Click a photo to delete it.</p>
+        </div>
+        <button class="btn btn--primary" id="goToUploadBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Upload New Photo
+        </button>
+      </div>
+
+      <!-- Stats row -->
+      <div class="dash-stats" id="dashStats">
+        <div class="dash-stat">
+          <span class="dash-stat__num" id="statTotalPhotos">—</span>
+          <span class="dash-stat__label">Total Photos</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__num" id="statTotalYears">—</span>
+          <span class="dash-stat__label">Years</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__num" id="statTotalFriends">—</span>
+          <span class="dash-stat__label">Friends</span>
+        </div>
+      </div>
+
+      <!-- Year filter for admin gallery view -->
+      <div class="dash-year-filter" id="dashYearFilter">
+        <button class="year-tab year-tab--active" data-year="all">All</button>
+      </div>
+
+      <!-- Admin masonry grid -->
+      <div class="admin-grid" id="adminGrid">
+        <div class="admin-grid__empty" id="adminGridEmpty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          <p>No photos yet. Upload your first photo!</p>
+          <button class="btn btn--primary" onclick="switchPanel('upload')">Upload Photo</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL: UPLOAD
+    ══════════════════════════════════════════════════════ -->
+    <section class="dash-panel" id="panel-upload" style="display:none;">
+      <div class="dash-panel__header">
+        <div>
+          <h2>Upload Photo</h2>
+          <p>Add a new photo to the gallery collection.</p>
+        </div>
+      </div>
+
+      <div class="upload-layout">
+
+        <!-- Drop zone -->
+        <div class="upload-dropzone" id="uploadDropzone">
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple hidden />
+          <div class="dropzone__content" id="dropzoneContent">
+            <div class="dropzone__icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <p class="dropzone__title">Drop your photos here</p>
+            <p class="dropzone__sub">or <button class="dropzone__browse" id="browseBtn">browse files</button></p>
+            <p class="dropzone__hint">JPG, PNG, WebP · Max 10MB per file · Up to 15 photos</p>
+          </div>
+          <!-- Preview shown after file selected -->
+          <div class="dropzone__preview" id="dropzonePreview" style="display:none;">
+            <img id="previewImg" src="" alt="Preview" />
+
+            <div class="dropzone__counter" id="previewCounter">1 / 1</div>
+
+            <button class="dropzone__nav dropzone__nav--prev" id="previewPrevBtn" aria-label="Previous photo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button class="dropzone__nav dropzone__nav--next" id="previewNextBtn" aria-label="Next photo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+
+            <button class="dropzone__clear" id="clearFileBtn" aria-label="Remove this photo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Form fields -->
+        <div class="upload-form" id="uploadForm">
+
+          <div class="form-field">
+            <label class="form-label" for="photoTitle">Photo Title</label>
+            <input type="text" id="photoTitle" class="form-input form-input--plain"
+              placeholder="e.g. Library Study Session" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="photoPeople">People in Photo</label>
+            <input type="text" id="photoPeople" class="form-input form-input--plain"
+              placeholder="e.g. Barclaynes, John, Sarah" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="photoLocation">Location</label>
+            <input type="text" id="photoLocation" class="form-input form-input--plain"
+              placeholder="e.g. Main Library, Room 204" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="photoPhotographer">Photographer</label>
+            <input type="text" id="photoPhotographer" class="form-input form-input--plain"
+              placeholder="Who took this photo?" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="photoYear">Year</label>
+            <select id="photoYear" class="form-input form-input--plain form-select">
+              <option value="2026">2026</option>
+              <option value="2025" selected>2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+            </select>
+          </div>
+
+          <!-- Upload progress -->
+          <div class="upload-progress" id="uploadProgress" style="display:none;">
+            <div class="upload-progress__bar">
+              <div class="upload-progress__fill" id="uploadProgressFill"></div>
+            </div>
+            <span class="upload-progress__text" id="uploadProgressText">Uploading...</span>
+          </div>
+
+          <!-- Result message -->
+          <div class="upload-result" id="uploadResult" style="display:none;"></div>
+
+          <div class="upload-actions">
+            <button class="btn btn--primary" id="uploadSubmitBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Upload to Gallery
+            </button>
+            <button class="btn btn--secondary" id="uploadCancelBtn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL: USER MANAGEMENT
+    ══════════════════════════════════════════════════════ -->
+    <section class="dash-panel" id="panel-users" style="display:none;">
+      <div class="dash-panel__header">
+        <div>
+          <h2>Friend Accounts</h2>
+          <p>Add or remove friend access to the gallery.</p>
+        </div>
+      </div>
+
+      <!-- Add friend form -->
+      <div class="add-user-card">
+        <h3>Add a Friend</h3>
+        <div class="add-user-form" id="addUserForm">
+          <div class="form-field">
+            <label class="form-label" for="newUsername">Username</label>
+            <input type="text" id="newUsername" class="form-input form-input--plain" placeholder="e.g. john_doe" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="newDisplayName">Display Name</label>
+            <input type="text" id="newDisplayName" class="form-input form-input--plain" placeholder="e.g. John Doe" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="newPassword">Password</label>
+            <input type="password" id="newPassword" class="form-input form-input--plain"
+              placeholder="Set a temporary password" />
+          </div>
+          <div class="add-user-result" id="addUserResult" style="display:none;"></div>
+          <button class="btn btn--primary" id="addUserBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Friend
+          </button>
+        </div>
+      </div>
+
+      <!-- Friends list -->
+      <div class="users-list-card">
+        <h3>Current Friends</h3>
+        <div class="users-list" id="usersList">
+          <p class="users-list__loading">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <!-- /dashboard-main -->
+
+  <!-- ── DELETE CONFIRM MODAL ───────────────────────────────── -->
+  <div class="modal" id="deleteModal" hidden>
+    <div class="modal__backdrop" id="deleteModalBackdrop"></div>
+    <div class="modal__box">
+      <div class="modal__icon modal__icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        </svg>
+      </div>
+      <h3>Delete Photo?</h3>
+      <p>This will permanently remove the photo from the gallery and Cloudinary. This cannot be undone.</p>
+      <div class="modal__actions">
+        <button class="btn btn--primary modal__confirm-delete" id="confirmDeleteBtn"
+          style="background:#C0392B; border-color:#C0392B;">
+          Yes, Delete
+        </button>
+        <button class="btn btn--secondary" id="cancelDeleteBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/global.js"></script>
+  <script src="/js/admin-dashboard.js"></script>
+</body>
+
+</html>

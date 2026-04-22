@@ -1,0 +1,19 @@
+# ── Environment & Secrets ────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── Node.js ──────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ── Uploads (local dev only — production uses Cloudinary) ────
+server/uploads/
+
+# ── OS Files ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── VS Code ──────────────────────────────────────────────────
+.vscode/
+*.code-workspace

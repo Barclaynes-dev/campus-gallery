@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Campus Gallery</title>
+  <meta name="description" content="The story behind the Campus Gallery." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/about.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────── -->
+  <header class="site-header" id="siteHeader">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__logo">
+        <span class="logo-dot"></span>
+        <span>Campus Gallery</span>
+      </a>
+      <nav>
+        <ul class="site-header__nav">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/about.html" class="nav-link active">About</a></li>
+          <li><a href="/gallery.html" class="nav-link">Gallery</a></li>
+          <li><a href="/#contact" class="nav-link">Contact</a></li>
+          <li class="nav-divider"></li>
+          <li><a href="/login.html" class="nav-link nav-link--login" id="navLoginLink">Sign In</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" aria-label="Toggle theme"></button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/gallery.html">Gallery</a></li>
+      <li><a href="/login.html">Sign In</a></li>
+    </ul>
+  </div>
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+  <main>
+
+    <!-- ══════════════════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════════════════ -->
+    <section class="about-hero">
+      <!-- Animated canvas background -->
+      <canvas class="hero-canvas" id="heroCanvas"></canvas>
+      <!-- Grain overlay for texture -->
+      <div class="hero-grain"></div>
+
+      <div class="about-hero__bg">
+        <div class="about-hero__blob about-hero__blob--1"></div>
+        <div class="about-hero__blob about-hero__blob--2"></div>
+      </div>
+      <div class="container about-hero__inner">
+        <div class="about-hero__content">
+          <p class="label-tag label-tag--accent js-fade-up">Our Story</p>
+          <h1 class="js-split-title">
+            <span class="split-line">More than</span>
+            <span class="split-line split-line--italic">photographs —</span>
+            <span class="split-line">a living diary.</span>
+          </h1>
+          <p class="about-hero__sub js-fade-up">
+            Campus Gallery started as a simple idea: what if we had one place
+            where every laugh, every late night, every proud moment could live together?
+          </p>
+        </div>
+        <div class="about-hero__image js-fade-up">
+          <div class="about-hero__img-frame">
+            <img src="/assets/images/hero_10i.png"
+                 alt="Friends on campus" />
+            <div class="about-hero__img-tag">
+              <span class="tag-dot"></span>
+              Campus Life · Uganda
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         MISSION STATEMENT — Large editorial text
+    ══════════════════════════════════════════════════════ -->
+    <section class="mission section">
+      <div class="container--narrow">
+        <div class="mission__inner">
+          <div class="mission__label js-fade-up">
+            <span class="label-tag">Why We Built This</span>
+            <div class="mission__line"></div>
+          </div>
+          <blockquote class="mission__quote js-split-words">
+            "We built this gallery because memories deserve better than a phone camera
+            roll that nobody ever scrolls back through."
+          </blockquote>
+          <p class="mission__body js-fade-up">
+            Social media is great for sharing, but terrible for keeping. Posts get buried,
+            accounts get deleted, and suddenly a whole year of memories just… vanishes.
+            Campus Gallery is our answer to that — a dedicated, private, beautifully
+            organised space that belongs to us.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         FEATURES / VALUES — Three-column grid
+    ══════════════════════════════════════════════════════ -->
+    <section class="values section" id="values">
+      <div class="container">
+        <div class="values__header js-fade-up">
+          <p class="label-tag">What Makes It Ours</p>
+          <h2>Built with intention,<br/><em>made for memory.</em></h2>
+        </div>
+
+        <div class="values__grid">
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h3>Private by Default</h3>
+            <p>This gallery is invite-only. Every person here was added intentionally. No strangers, no algorithms — just us.</p>
+          </div>
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+            <h3>Every Detail Captured</h3>
+            <p>Each photo remembers who was in it, where it was taken, who took it, and when. Context that photo rolls never give you.</p>
+          </div>
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+            <h3>Yours to Keep</h3>
+            <p>Download any photo in the resolution you need — from 720p to 4K. Your memories in full quality, whenever you want them.</p>
+          </div>
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <h3>Organised by Year</h3>
+            <p>Every semester, every academic year — browsable and searchable. The story of our time on campus, in order.</p>
+          </div>
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <h3>Personal Collections</h3>
+            <p>Save your favourite photos, create your own categories, and build a personal slice of the gallery that is uniquely yours.</p>
+          </div>
+
+          <div class="value-card js-fade-up">
+            <div class="value-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
+            </div>
+            <h3>Works Everywhere</h3>
+            <p>Install it on your phone like an app, or access it from any browser. Campus Gallery goes wherever you go.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ══════════════════════════════════════════════════════
+         TIMELINE — Campus journey
+    ══════════════════════════════════════════════════════ -->
+    <section class="timeline-section section" id="timeline">
+      <div class="container">
+        <div class="timeline-section__header js-fade-up">
+          <p class="label-tag">The Journey</p>
+          <h2>How it all<br/><em>began.</em></h2>
+        </div>
+
+        <div class="timeline">
+
+          <div class="timeline-item js-timeline-item">
+            <div class="timeline-item__dot"></div>
+            <div class="timeline-item__content">
+              <span class="timeline-item__year">2024</span>
+              <h3>The Idea</h3>
+              <p>Started as a shared folder. Someone said "this deserves better." That was enough to begin building.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item js-timeline-item">
+            <div class="timeline-item__dot"></div>
+            <div class="timeline-item__content">
+              <span class="timeline-item__year">Early 2025</span>
+              <h3>First Upload</h3>
+              <p>The gallery went live. First photo uploaded: a candid from the library at midnight before exams.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item js-timeline-item">
+            <div class="timeline-item__dot"></div>
+            <div class="timeline-item__content">
+              <span class="timeline-item__year">Mid 2025</span>
+              <h3>Growing Collection</h3>
+              <p>More friends added. More years catalogued. The gallery became a real archive of campus life.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item js-timeline-item">
+            <div class="timeline-item__dot"></div>
+            <div class="timeline-item__content">
+              <span class="timeline-item__year">Now</span>
+              <h3>Still Going</h3>
+              <p>Every new semester adds new memories. The gallery grows with us — and will outlast our time here.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         CTA BANNER
+    ══════════════════════════════════════════════════════ -->
+    <section class="about-cta js-fade-up">
+      <div class="container">
+        <div class="about-cta__inner">
+          <div class="about-cta__text">
+            <h2>Ready to explore<br/><em>the collection?</em></h2>
+            <p>Sign in with your friend account and start browsing — or ask the admin to add you.</p>
+          </div>
+          <div class="about-cta__actions">
+            <a href="/gallery.html" class="btn btn--primary">Browse Gallery</a>
+            <a href="/login.html"   class="btn btn--secondary">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="contact">
+    <div class="container site-footer__inner">
+      <div class="footer-brand js-fade-up">
+        <div class="footer-logo">
+          <span class="logo-dot"></span>Campus Gallery
+        </div>
+        <p>A private space for campus memories.<br/>By friends, for friends.</p>
+      </div>
+      <div class="footer-links js-fade-up">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/gallery.html">Gallery</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/login.html">Sign In</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact js-fade-up">
+        <h4>Contact</h4>
+        <p>Got a photo to share or a memory to add?</p>
+        <a href="mailto:gallery@campus.ac.ug" class="footer-email">gallery@campus.ac.ug</a>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <span>© 2025 Campus Gallery. All rights reserved.</span>
+      <span>Made with care on campus.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="/js/global.js"></script>
+  <script src="/js/about.js"></script>
+</body>
+</html>

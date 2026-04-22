@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Gallery — Our Story, One Moment at a Time</title>
+  <meta name="description" content="A private, premium photo gallery for campus friends." />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container site-header__inner">
+
+      <a href="/" class="site-header__logo js-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Campus Gallery</span>
+      </a>
+
+      <nav aria-label="Main navigation">
+        <ul class="site-header__nav" id="mainNav">
+          <li><a href="/" class="nav-link active">Home</a></li>
+          <li><a href="/about.html" class="nav-link">About</a></li>
+          <li><a href="/gallery.html" class="nav-link">Gallery</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+          <li class="nav-divider"></li>
+          <li><a href="/login.html" class="nav-link nav-link--login" id="navLoginLink">Sign In</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" aria-label="Toggle theme" id="themeToggleBtn"></button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile nav drawer -->
+  <div class="mobile-nav" id="mobileNav">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/gallery.html">Gallery</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="/login.html">Sign In</a></li>
+    </ul>
+  </div>
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+  <main>
+
+    <!-- ══════════════════════════════════════════
+         HERO SECTION
+    ══════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+
+      <!-- Animated canvas background -->
+      <canvas class="hero-canvas" id="heroCanvas"></canvas>
+
+      <!-- Grain overlay for texture -->
+      <div class="hero-grain"></div>
+
+      <div class="container hero-inner">
+
+        <div class="hero-content">
+          <p class="label-tag label-tag--accent js-fade-up">Campus · Uganda · 2024–present</p>
+
+          <h1 class="hero-title">
+            <span class="hero-title__line js-title-line">Our Story,</span>
+            <span class="hero-title__line hero-title__line--italic js-title-line">One Moment</span>
+            <span class="hero-title__line js-title-line">at a Time.</span>
+          </h1>
+
+          <p class="hero-sub js-fade-up">
+            A private collection of campus memories — candid, honest, and always ours.
+          </p>
+
+          <div class="hero-ctas js-fade-up">
+            <a href="/gallery.html" class="btn btn--primary">
+              Browse Gallery
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="/about.html" class="btn btn--secondary">Our Story</a>
+          </div>
+        </div>
+
+        <!-- Hero floating image collage -->
+        <div class="hero-collage js-hero-collage">
+          <div class="collage-frame collage-frame--1 js-collage-frame">
+            <div class="collage-img-wrap">
+              <img src="/assets/images/hero_1.jpeg" alt="Campus life" />
+            </div>
+            <span class="collage-tag">The Highlights Reel</span>
+          </div>
+          <div class="collage-frame collage-frame--2 js-collage-frame">
+            <div class="collage-img-wrap">
+              <img src="/assets/images/hero_3.jpeg" alt="Campus memories" />
+            </div>
+            <span class="collage-tag">Vivids</span>
+          </div>
+          <div class="collage-frame collage-frame--3 js-collage-frame">
+            <div class="collage-img-wrap">
+              <img src="/assets/images/hero_4.png" alt="Campus architecture" style="object-position: center 85%;" />
+            </div>
+          </div>
+          <!-- Floating stat pills -->
+          <div class="hero-pill hero-pill--1 js-fade-up">
+            <span class="pill-num" id="photoCount">—</span>
+            <span class="pill-label">Memories</span>
+          </div>
+          <div class="hero-pill hero-pill--2 js-fade-up">
+            <span class="pill-dot"></span>
+            <span class="pill-label">Live Gallery</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hero-scroll-hint js-fade-up">
+        <span>Scroll to explore</span>
+        <div class="scroll-line"></div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         PICTURE OF THE DAY
+    ══════════════════════════════════════════ -->
+    <section class="potd section" id="pictureOfDay">
+      <div class="container">
+
+        <div class="potd-header js-fade-up">
+          <p class="label-tag">Daily Feature</p>
+          <h2>Picture of<br/><em>the Day</em></h2>
+          <p class="potd-date" id="potdDate"></p>
+        </div>
+
+        <div class="potd-layout">
+
+          <!-- Main featured image -->
+          <div class="potd-main" id="potdMain">
+            <div class="potd-main__frame">
+              <div class="potd-main__img-wrap" id="potdImgWrap">
+                <!-- Placeholder shown while loading -->
+                <div class="potd-placeholder" id="potdPlaceholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <p>Today's featured photo<br/>will appear here</p>
+                </div>
+                <img id="potdImage" src="" alt="" style="display:none;" />
+              </div>
+              <!-- Corner accent -->
+              <div class="potd-corner potd-corner--tl"></div>
+              <div class="potd-corner potd-corner--br"></div>
+            </div>
+          </div>
+
+          <!-- Description card -->
+          <div class="potd-info" id="potdInfo">
+            <div class="potd-info__inner">
+              <div class="potd-info__top">
+                <span class="label-tag label-tag--accent">Featured Today</span>
+                <h3 id="potdTitle">Loading...</h3>
+              </div>
+
+              <div class="potd-meta">
+                <div class="potd-meta__row" id="potdPeople">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>—</span>
+                </div>
+                <div class="potd-meta__row" id="potdLocation">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <span>—</span>
+                </div>
+                <div class="potd-meta__row" id="potdPhotographer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                  <span>—</span>
+                </div>
+                <div class="potd-meta__row" id="potdYear">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>—</span>
+                </div>
+              </div>
+
+              <a href="/gallery.html" class="btn btn--secondary potd-info__cta">
+                View Full Gallery
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         INFINITE HORIZONTAL SCROLL BAND
+    ══════════════════════════════════════════ -->
+    <section class="scroll-band" id="scrollBand">
+
+      <div class="scroll-band__header container js-fade-up">
+        <div>
+          <p class="label-tag">Recent Uploads</p>
+          <h2>Fresh from<br/><em>the campus</em></h2>
+        </div>
+        <a href="/gallery.html" class="btn btn--secondary scroll-band__cta">
+          See All
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <!-- The scrolling track — duplicated for seamless loop -->
+      <div class="scroll-band__outer">
+        <div class="scroll-band__track" id="scrollTrack">
+          <!-- Items injected by JS. Fallback static items below for empty state -->
+          <div class="band-item band-item--placeholder">
+            <div class="band-item__img"></div>
+            <span>Waiting for uploads...</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         ABOUT TEASER
+    ══════════════════════════════════════════ -->
+    <section class="about-teaser section" id="aboutTeaser">
+      <div class="container about-teaser__inner">
+
+        <div class="about-teaser__text js-fade-up">
+          <p class="label-tag">Who We Are</p>
+          <h2>More than photos —<br/><em>it's a diary.</em></h2>
+          <p>
+            Every image here is a real moment between real friends on a real campus.
+            No filters on the memories, just on the lens.
+          </p>
+          <a href="/about.html" class="btn btn--primary" style="margin-top:1.5rem;">
+            Read Our Story
+          </a>
+        </div>
+
+        <div class="about-teaser__visual js-fade-up">
+          <div class="visual-stack">
+            <div class="visual-stack__img visual-stack__img--back">
+              <img src="/assets/images/hero_8.png" alt="Campus building" />
+            </div>
+            <div class="visual-stack__img visual-stack__img--front">
+              <img src="/assets/images/Hero_5.png" alt="Campus friend" />
+            </div>
+            <div class="visual-stack__badge js-fade-up">
+              <span>✦</span>
+              <span>Est. 2024</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         CONTACT / FOOTER SECTION
+    ══════════════════════════════════════════ -->
+    <footer class="site-footer" id="contact">
+      <div class="container site-footer__inner">
+
+        <div class="footer-brand js-fade-up">
+          <div class="footer-logo">
+            <span class="logo-dot"></span>
+            Campus Gallery
+          </div>
+          <p>A private space for campus memories.<br/>By friends, for friends.</p>
+        </div>
+
+        <div class="footer-links js-fade-up">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/gallery.html">Gallery</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/login.html">Sign In</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-contact js-fade-up">
+          <h4>Contact</h4>
+          <p>Got a photo to share or a memory to add? Reach out to the gallery admin.</p>
+          <a href="mailto:gallery@campus.ac.ug" class="footer-email">gallery@campus.ac.ug</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom container">
+        <span>© 2025 Campus Gallery. All rights reserved.</span>
+        <span>Made with care on campus.</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- GSAP from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="/js/global.js"></script>
+  <script src="/js/home.js"></script>
+
+</body>
+</html>
