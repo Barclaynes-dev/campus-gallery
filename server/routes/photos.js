@@ -6,10 +6,43 @@ const { requireAdmin, requireLogin } = require("../middleware/authMiddleware");
 const router     = express.Router();
 
 // ── Cloudinary Configuration ─────────────────────────────────
+function cleanEnv(value) {
+  if (typeof value !== "string") return "";
+  // Railway env values occasionally get copied with spaces/quotes.
+  return value.trim().replace(/^['"]|['"]$/g, "");
+}
+
+function readCloudinaryConfigFromEnv() {
+  let cloudName = cleanEnv(process.env.CLOUDINARY_CLOUD_NAME);
+  let apiKey = cleanEnv(process.env.CLOUDINARY_API_KEY);
+  let apiSecret = cleanEnv(process.env.CLOUDINARY_API_SECRET);
+
+  // Fallback for deployments that only provide CLOUDINARY_URL.
+  if ((!cloudName || !apiKey || !apiSecret) && process.env.CLOUDINARY_URL) {
+    try {
+      const parsed = new URL(cleanEnv(process.env.CLOUDINARY_URL));
+      if (parsed.protocol === "cloudinary:") {
+        cloudName = cloudName || cleanEnv(parsed.hostname);
+        apiKey = apiKey || cleanEnv(decodeURIComponent(parsed.username || ""));
+        apiSecret = apiSecret || cleanEnv(decodeURIComponent(parsed.password || ""));
+      }
+    } catch (err) {
+      console.error("Invalid CLOUDINARY_URL format:", err.message);
+    }
+  }
+
+  return { cloudName, apiKey, apiSecret };
+}
+
+const { cloudName, apiKey, apiSecret } = readCloudinaryConfigFromEnv();
+if (!cloudName || !apiKey || !apiSecret) {
+  console.error("Missing Cloudinary env values. Check CLOUDINARY_* variables in Railway.");
+}
+
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: cloudName,
+  api_key: apiKey,
+  api_secret: apiSecret,
 });
 
 // Use memory storage to handle the file buffer manually
@@ -53,7 +86,7 @@ router.post("/", upload.single("image"), async (req, res) => {
             details: error.message 
           });
         }
-
+        
         try {
           const { title, people_names, location, photographer, year } = req.body;
           
