@@ -1,5 +1,5 @@
 // ============================================================
-//  server/routes/photos.js — Photo CRUD + Upload
+//  server/routes/photos.js — Photo CRUD + ULTIMATE DEBUG VERSION
 // ============================================================
 
 const express    = require("express");
@@ -11,7 +11,6 @@ const { requireAdmin, requireLogin } = require("../middleware/authMiddleware");
 const router     = express.Router();
 
 // ── Cloudinary Configuration ─────────────────────────────────
-// Credentials come from your .env file
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
@@ -22,25 +21,23 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "campus-gallery",          // Folder name in your Cloudinary account
+    folder: "campus-gallery",
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ quality: "auto" }], // Auto-optimize quality
+    transformation: [{ quality: "auto" }],
   },
 });
 const upload = multer({ storage });
 
-// ── GET /api/photos — Fetch all photos (optional year filter) ─
+// ── GET /api/photos — Fetch all photos ───────────────────────
 router.get("/", requireLogin, async (req, res) => {
   const { year } = req.query;
   try {
     let query  = "SELECT * FROM photos ORDER BY created_at DESC";
     let params = [];
-
     if (year) {
       query  = "SELECT * FROM photos WHERE year = ? ORDER BY created_at DESC";
       params = [year];
     }
-
     const [photos] = await db.execute(query, params);
     res.json(photos);
   } catch (err) {
@@ -50,15 +47,12 @@ router.get("/", requireLogin, async (req, res) => {
 });
 
 // ── GET /api/photos/daily — Picture of the Day ───────────────
-// Returns a consistent random photo for the current calendar day
 router.get("/daily", async (req, res) => {
   try {
     const [photos] = await db.execute("SELECT * FROM photos");
     if (photos.length === 0) return res.json(null);
-
-    // Use Uganda time (Africa/Kampala) so the photo changes exactly at midnight local time
-    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Kampala' }); // "YYYY-MM-DD"
-    const seed  = today.split("-").join(""); // "YYYYMMDD"
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Kampala' });
+    const seed  = today.split("-").join("");
     const index = parseInt(seed) % photos.length;
     res.json(photos[index]);
   } catch (err) {
@@ -66,7 +60,7 @@ router.get("/daily", async (req, res) => {
   }
 });
 
-// ── GET /api/photos/recent — For the infinite scroll band ────
+// ── GET /api/photos/recent — For infinite scroll ─────────────
 router.get("/recent", async (req, res) => {
   try {
     const [photos] = await db.execute(
@@ -78,54 +72,61 @@ router.get("/recent", async (req, res) => {
   }
 });
 
-// ── POST /api/photos — Upload a new photo (Admin only) ───────
-router.post("/", upload.single("image"), async (req, res) => {
-  const { title, people_names, location, photographer, year } = req.body;
+// ── POST /api/photos — DEBUG VERSION ─────────────────────────
+// This version catches and displays the hidden error message.
+router.post("/", (req, res) => {
+  // Use the upload middleware manually so we can catch errors
+  upload.single("image")(req, res, async (err) => {
+    // Stage 1: Check if Cloudinary/Multer crashed
+    if (err) {
+      console.error("CLOUDINARY ENGINE CRASH:", err);
+      return res.status(500).json({ 
+        error: "Cloudinary Engine Crash", 
+        details: err.message || err 
+      });
+    }
 
-  if (!req.file) {
-    return res.status(400).json({ error: "No image file provided." });
-  }
+    // Stage 2: Check if file arrived
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file reached the server." });
+    }
 
-  try {
-    // Cloudinary returns the uploaded file info in req.file
-    const imageUrl      = req.file.path;         // Full Cloudinary URL
-    const publicId      = req.file.filename;     // Cloudinary public_id
-    const originalWidth = req.file.width  || 0;
-    const originalHeight= req.file.height || 0;
+    try {
+      const { title, people_names, location, photographer, year } = req.body;
+      const imageUrl = req.file.path;
+      const publicId = req.file.filename;
 
-    await db.execute(
-      `INSERT INTO photos 
-        (title, image_url, cloudinary_public_id, people_names, location, photographer, year)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [title, imageUrl, publicId, people_names, location, photographer, year]
-    );
+      // Stage 3: Database Insert (matching your Railway columns)
+      await db.execute(
+        `INSERT INTO photos (title, image_url, cloudinary_public_id, people_names, location, photographer, year) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [title, imageUrl, publicId, people_names, location, photographer, year]
+      );
 
-    res.status(201).json({ message: "Photo uploaded successfully.", url: imageUrl });
-  } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ error: "Upload failed." });
-  }
+      console.log("Upload Success for:", title);
+      res.status(201).json({ message: "SUCCESS!", url: imageUrl });
+
+    } catch (dbErr) {
+      // Stage 4: Catch Database Failures (like missing columns)
+      console.error("DATABASE SAVE ERROR:", dbErr);
+      res.status(500).json({ 
+        error: "Database Save Failed", 
+        details: dbErr.message 
+      });
+    }
+  });
 });
 
-// ── DELETE /api/photos/:id — Delete a photo (Admin only) ─────
+// ── DELETE /api/photos/:id — Delete a photo ──────────────────
 router.delete("/:id", requireAdmin, async (req, res) => {
   const { id } = req.params;
   try {
-    // Get the Cloudinary public_id so we can delete from cloud too
     const [rows] = await db.execute(
       "SELECT cloudinary_public_id FROM photos WHERE id = ?", [id]
     );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Photo not found." });
-    }
-
-    // Delete from Cloudinary
+    if (rows.length === 0) return res.status(404).json({ error: "Photo not found." });
     await cloudinary.uploader.destroy(rows[0].cloudinary_public_id);
-
-    // Delete from database
     await db.execute("DELETE FROM photos WHERE id = ?", [id]);
-
     res.json({ message: "Photo deleted successfully." });
   } catch (err) {
     console.error("Delete error:", err);
