@@ -1,5 +1,5 @@
 // ============================================================
-//  server/routes/photos.js — Photo CRUD + ULTIMATE DEBUG VERSION
+//  server/routes/photos.js — FINAL STABLE VERSION
 // ============================================================
 
 const express    = require("express");
@@ -17,13 +17,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Tell multer to upload directly to Cloudinary
+// ── Cleaned Storage Config (Fixes Invalid Signature) ──────────
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinary,
   params: {
     folder: "campus-gallery",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ quality: "auto" }],
+    format: "jpg", // Simplified to a single format to fix signature handshake
   },
 });
 const upload = multer({ storage });
@@ -72,21 +71,18 @@ router.get("/recent", async (req, res) => {
   }
 });
 
-// ── POST /api/photos — DEBUG VERSION ─────────────────────────
-// This version catches and displays the hidden error message.
+// ── POST /api/photos — Stable Upload Route ───────────────────
 router.post("/", (req, res) => {
-  // Use the upload middleware manually so we can catch errors
+  // We use the manual callback to catch any Cloudinary or DB errors
   upload.single("image")(req, res, async (err) => {
-    // Stage 1: Check if Cloudinary/Multer crashed
     if (err) {
-      console.error("CLOUDINARY ENGINE CRASH:", err);
+      console.error("CLOUDINARY ERROR:", err);
       return res.status(500).json({ 
         error: "Cloudinary Engine Crash", 
         details: err.message || err 
       });
     }
 
-    // Stage 2: Check if file arrived
     if (!req.file) {
       return res.status(400).json({ error: "No image file reached the server." });
     }
@@ -96,19 +92,17 @@ router.post("/", (req, res) => {
       const imageUrl = req.file.path;
       const publicId = req.file.filename;
 
-      // Stage 3: Database Insert (matching your Railway columns)
+      // Inserting into your existing Railway columns
       await db.execute(
         `INSERT INTO photos (title, image_url, cloudinary_public_id, people_names, location, photographer, year) 
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [title, imageUrl, publicId, people_names, location, photographer, year]
       );
 
-      console.log("Upload Success for:", title);
       res.status(201).json({ message: "SUCCESS!", url: imageUrl });
 
     } catch (dbErr) {
-      // Stage 4: Catch Database Failures (like missing columns)
-      console.error("DATABASE SAVE ERROR:", dbErr);
+      console.error("DATABASE ERROR:", dbErr);
       res.status(500).json({ 
         error: "Database Save Failed", 
         details: dbErr.message 
