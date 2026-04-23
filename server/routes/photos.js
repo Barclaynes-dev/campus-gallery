@@ -9,7 +9,7 @@ const router     = express.Router();
 function cleanEnv(value) {
   if (typeof value !== "string") return "";
   // Railway env values occasionally get copied with spaces/quotes.
-  return value.trim().replace(/^['"]|['"]$/g, "");
+  return value.trim().replace(/^['"]|['"]$/g, "").replace(/\s+/g, "");
 }
 
 function readCloudinaryConfigFromEnv() {
@@ -55,6 +55,31 @@ cloudinary.config({
   cloud_name: cloudName,
   api_key: apiKey,
   api_secret: apiSecret,
+});
+
+// Quick credential probe for debugging production env mismatch.
+router.get("/cloudinary-check", requireLogin, async (req, res) => {
+  try {
+    const ping = await cloudinary.api.ping();
+    return res.json({
+      ok: true,
+      cloudinary_config_source: source,
+      cloudinary_cloud_name: cloudName,
+      key_prefix: `${apiKey.slice(0, 4)}***`,
+      secret_length: apiSecret.length,
+      ping_status: ping?.status || "unknown",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      ok: false,
+      cloudinary_config_source: source,
+      cloudinary_cloud_name: cloudName,
+      key_prefix: `${apiKey.slice(0, 4)}***`,
+      secret_length: apiSecret.length,
+      error: err?.message || "Cloudinary check failed",
+      http_code: err?.http_code || null,
+    });
+  }
 });
 
 // Use memory storage to handle the file buffer manually
