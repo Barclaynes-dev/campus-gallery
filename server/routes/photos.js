@@ -12,8 +12,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ── Use Memory Storage instead of Cloudinary Storage ──────────
-// This bypasses the signature handshake issues entirely
+// Use memory storage to handle the file buffer manually
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -36,25 +35,29 @@ router.get("/daily", async (req, res) => {
   } catch (err) { res.status(500).json({ error: "Daily error" }); }
 });
 
-// ── POST /api/photos — THE MANUAL FIX ─────────────────────────
+// ── POST /api/photos — THE FINAL FIX ──────────────────────────
+// We removed the requireAdmin temporarily as we discussed earlier
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No image provided" });
 
-    // 1. Manually upload the buffer to Cloudinary
-    // This is much more stable than the automatic storage engine
+    // This method creates a direct stream to Cloudinary,
+    // letting the SDK handle all the signature math for you.
     const uploadStream = cloudinary.uploader.upload_stream(
       { folder: "campus-gallery" },
       async (error, result) => {
         if (error) {
-          console.error("Cloudinary Manual Error:", error);
-          return res.status(500).json({ error: "Cloudinary Fail", details: error.message });
+          console.error("Cloudinary Stream Error:", error);
+          return res.status(500).json({ 
+            error: "Cloudinary Fail", 
+            details: error.message 
+          });
         }
 
         try {
           const { title, people_names, location, photographer, year } = req.body;
           
-          // 2. Save to MySQL using the result from manual upload
+          // Using the columns verified in your Railway MySQL table
           await db.execute(
             `INSERT INTO photos (title, image_url, cloudinary_public_id, people_names, location, photographer, year) 
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -63,12 +66,13 @@ router.post("/", upload.single("image"), async (req, res) => {
 
           return res.status(201).json({ message: "SUCCESS!", url: result.secure_url });
         } catch (dbErr) {
+          console.error("DB Save Error:", dbErr);
           return res.status(500).json({ error: "Database Fail", details: dbErr.message });
         }
       }
     );
 
-    // Send the file data to the stream
+    // Send the file buffer directly to the stream
     uploadStream.end(req.file.buffer);
 
   } catch (globalErr) {
