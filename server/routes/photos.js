@@ -70,13 +70,28 @@ router.get("/cloudinary-check", requireLogin, async (req, res) => {
       ping_status: ping?.status || "unknown",
     });
   } catch (err) {
+    const detailedMessage =
+      err?.message ||
+      err?.error?.message ||
+      err?.response?.error?.message ||
+      String(err);
+
+    console.error("Cloudinary check error:", {
+      name: err?.name,
+      message: err?.message,
+      http_code: err?.http_code,
+      error: err?.error,
+      response: err?.response,
+    });
+
     return res.status(500).json({
       ok: false,
       cloudinary_config_source: source,
       cloudinary_cloud_name: cloudName,
       key_prefix: `${apiKey.slice(0, 4)}***`,
       secret_length: apiSecret.length,
-      error: err?.message || "Cloudinary check failed",
+      error: detailedMessage,
+      error_name: err?.name || null,
       http_code: err?.http_code || null,
     });
   }
