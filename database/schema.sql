@@ -5,9 +5,6 @@
 --         Select this file → Click the ⚡ Execute button
 -- ============================================================
 
--- Create and select the database
-CREATE DATABASE IF NOT EXISTS campus_gallery CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE campus_gallery;
 
 -- ── Users Table ──────────────────────────────────────────────
 -- Stores both the admin (designer) and friend accounts

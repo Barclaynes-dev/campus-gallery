@@ -30,6 +30,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // ── Session Setup ────────────────────────────────────────────
 // Sessions keep users logged in across requests.
 // The secret key comes from your .env file — never share it.
+app.set('trust proxy', 1); // Add this line
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "campus_gallery_dev_secret",
