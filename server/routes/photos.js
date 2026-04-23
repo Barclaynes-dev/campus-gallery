@@ -79,7 +79,7 @@ router.get("/recent", async (req, res) => {
 });
 
 // ── POST /api/photos — Upload a new photo (Admin only) ───────
-router.post("/", requireAdmin, upload.single("image"), async (req, res) => {
+router.post("/", upload.single("image"), async (req, res) => {
   const { title, people_names, location, photographer, year } = req.body;
 
   if (!req.file) {
