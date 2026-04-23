@@ -95,9 +95,9 @@ router.post("/", requireAdmin, upload.single("image"), async (req, res) => {
 
     await db.execute(
       `INSERT INTO photos 
-        (title, image_url, cloudinary_public_id, people_names, location, photographer, year, original_width, original_height)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [title, imageUrl, publicId, people_names, location, photographer, year, originalWidth, originalHeight]
+        (title, image_url, cloudinary_public_id, people_names, location, photographer, year)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [title, imageUrl, publicId, people_names, location, photographer, year]
     );
 
     res.status(201).json({ message: "Photo uploaded successfully.", url: imageUrl });
