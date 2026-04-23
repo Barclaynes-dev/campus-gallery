@@ -13,30 +13,42 @@ function cleanEnv(value) {
 }
 
 function readCloudinaryConfigFromEnv() {
-  let cloudName = cleanEnv(process.env.CLOUDINARY_CLOUD_NAME);
-  let apiKey = cleanEnv(process.env.CLOUDINARY_API_KEY);
-  let apiSecret = cleanEnv(process.env.CLOUDINARY_API_SECRET);
+  let cloudName = "";
+  let apiKey = "";
+  let apiSecret = "";
+  let source = "none";
 
-  // Fallback for deployments that only provide CLOUDINARY_URL.
-  if ((!cloudName || !apiKey || !apiSecret) && process.env.CLOUDINARY_URL) {
+  // Prefer CLOUDINARY_URL in production to avoid mixed/stale env vars.
+  if (process.env.CLOUDINARY_URL) {
     try {
       const parsed = new URL(cleanEnv(process.env.CLOUDINARY_URL));
       if (parsed.protocol === "cloudinary:") {
-        cloudName = cloudName || cleanEnv(parsed.hostname);
-        apiKey = apiKey || cleanEnv(decodeURIComponent(parsed.username || ""));
-        apiSecret = apiSecret || cleanEnv(decodeURIComponent(parsed.password || ""));
+        cloudName = cleanEnv(parsed.hostname);
+        apiKey = cleanEnv(decodeURIComponent(parsed.username || ""));
+        apiSecret = cleanEnv(decodeURIComponent(parsed.password || ""));
+        source = "CLOUDINARY_URL";
       }
     } catch (err) {
       console.error("Invalid CLOUDINARY_URL format:", err.message);
     }
   }
 
-  return { cloudName, apiKey, apiSecret };
+  // Fallback to separate vars only when URL isn't present/usable.
+  if (!cloudName || !apiKey || !apiSecret) {
+    cloudName = cleanEnv(process.env.CLOUDINARY_CLOUD_NAME);
+    apiKey = cleanEnv(process.env.CLOUDINARY_API_KEY);
+    apiSecret = cleanEnv(process.env.CLOUDINARY_API_SECRET);
+    source = "CLOUDINARY_*";
+  }
+
+  return { cloudName, apiKey, apiSecret, source };
 }
 
-const { cloudName, apiKey, apiSecret } = readCloudinaryConfigFromEnv();
+const { cloudName, apiKey, apiSecret, source } = readCloudinaryConfigFromEnv();
 if (!cloudName || !apiKey || !apiSecret) {
   console.error("Missing Cloudinary env values. Check CLOUDINARY_* variables in Railway.");
+} else {
+  console.log(`[Cloudinary] Config loaded from ${source}. cloud=${cloudName}, keyPrefix=${apiKey.slice(0, 4)}***, secretLength=${apiSecret.length}`);
 }
 
 cloudinary.config({
@@ -83,10 +95,12 @@ router.post("/", upload.single("image"), async (req, res) => {
           console.error("Cloudinary Stream Error:", error);
           return res.status(500).json({ 
             error: "Cloudinary Fail", 
-            details: error.message 
+            details: error.message,
+            cloudinary_config_source: source,
+            cloudinary_cloud_name: cloudName
           });
         }
-        
+
         try {
           const { title, people_names, location, photographer, year } = req.body;
           
