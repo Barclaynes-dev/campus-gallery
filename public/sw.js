@@ -4,7 +4,7 @@
 //  This file must live at the ROOT of your public folder.
 // ============================================================
 
-const CACHE_NAME    = "campus-gallery-v1";
+const CACHE_NAME    = "campus-gallery-v2";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -19,6 +19,7 @@ const STATIC_ASSETS = [
   "/js/global.js",
   "/js/home.js",
   "/js/gallery.js",
+  "/js/about.js",
   "/manifest.json",
 ];
 
@@ -46,7 +47,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// ── Fetch: Network-first for API, Cache-first for static ─────
+// ── Fetch strategy ─────────────────────────────────────────────
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -57,22 +58,34 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For static assets: try cache first, fall back to network
+  // For full-page navigations, prefer fresh network HTML so page/script/theme
+  // fixes are picked up immediately. Fall back to cache when offline.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return networkResponse;
+        })
+        .catch(() => caches.match(request).then((cached) => cached || caches.match("/index.html")))
+    );
+    return;
+  }
+
+  // For non-HTML static assets: stale-while-revalidate. Return cached quickly,
+  // but update cache in the background so next load gets fresh files.
   event.respondWith(
     caches.match(request).then((cached) => {
-      if (cached) return cached;
+      const networkFetch = fetch(request)
+        .then((networkResponse) => {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return networkResponse;
+        })
+        .catch(() => cached);
 
-      return fetch(request).then((networkResponse) => {
-        // Cache the new resource for future use
-        const clone = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        return networkResponse;
-      });
-    }).catch(() => {
-      // If offline and not cached, show a friendly fallback for HTML pages
-      if (request.headers.get("accept").includes("text/html")) {
-        return caches.match("/index.html");
-      }
+      return cached || networkFetch;
     })
   );
 });
