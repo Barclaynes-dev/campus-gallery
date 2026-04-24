@@ -217,7 +217,10 @@ async function loadScrollBand() {
   if (!track) return;
 
   try {
-    const res    = await fetch("/api/photos/recent");
+    const res = await fetch("/api/photos/recent");
+    if (!res.ok) {
+      throw new Error(`Recent photos request failed (${res.status})`);
+    }
     const photos = await res.json();
 
     if (!photos || photos.length === 0) return; // Keep placeholder
@@ -236,7 +239,7 @@ async function loadScrollBand() {
     track.innerHTML = buildItems(photos) + buildItems(photos);
 
   } catch (err) {
-    console.log("Could not load recent photos for scroll band.");
+    console.error("Could not load recent photos for scroll band:", err);
   }
 }
 

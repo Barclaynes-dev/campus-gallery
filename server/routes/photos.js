@@ -120,6 +120,18 @@ router.get("/daily", async (req, res) => {
   } catch (err) { res.status(500).json({ error: "Daily error" }); }
 });
 
+router.get("/recent", async (req, res) => {
+  try {
+    // Public homepage feed: newest uploads for the scroll band.
+    const [photos] = await db.execute(
+      "SELECT * FROM photos ORDER BY created_at DESC LIMIT 12"
+    );
+    res.json(photos);
+  } catch (err) {
+    res.status(500).json({ error: "Recent photos error" });
+  }
+});
+
 // ── POST /api/photos — THE FINAL FIX ──────────────────────────
 // We removed the requireAdmin temporarily as we discussed earlier
 router.post("/", upload.single("image"), async (req, res) => {
