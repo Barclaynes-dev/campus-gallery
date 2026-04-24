@@ -9,29 +9,25 @@ let filteredPhotos = [];
 let currentIndex = 0;
 let currentUser = null;
 
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // ── Check session ────────────────────────────────────────
-  const { loggedIn, user } = await CampusGallery.checkSession();
-  currentUser = user;
-
-  // Update nav login link
-  const navLogin = document.getElementById("navLoginLink");
-  if (loggedIn && navLogin) {
-    navLogin.textContent = user.role === "admin" ? "Dashboard" : "My Space";
-    navLogin.href = user.role === "admin"
-      ? "/admin/dashboard.html"
-      : "/friend/dashboard.html";
-  }
-
-  // ── Init everything ──────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
   initGSAP();
   initMobileNav();
   initHeaderScroll();
-  await loadPhotos();
-  initLightbox();
-  initBulkDownload();
-  initSearch();
+  void (async () => {
+    const { loggedIn, user } = await CampusGallery.checkSession();
+    currentUser = user;
+    const navLogin = document.getElementById("navLoginLink");
+    if (loggedIn && navLogin) {
+      navLogin.textContent = user.role === "admin" ? "Dashboard" : "My Space";
+      navLogin.href = user.role === "admin"
+        ? "/admin/dashboard.html"
+        : "/friend/dashboard.html";
+    }
+    await loadPhotos();
+    initLightbox();
+    initBulkDownload();
+    initSearch();
+  })();
 });
 
 function initSearch() {

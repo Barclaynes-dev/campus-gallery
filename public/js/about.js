@@ -3,23 +3,22 @@
 //  GSAP animations, timeline reveals, video placeholder
 // ============================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // Update nav if logged in
-  const { loggedIn, user } = await CampusGallery.checkSession();
-  const navLogin = document.getElementById("navLoginLink");
-  if (loggedIn && navLogin) {
-    navLogin.textContent = user.role === "admin" ? "Dashboard" : "My Space";
-    navLogin.href = user.role === "admin"
-      ? "/admin/dashboard.html"
-      : "/friend/dashboard.html";
-  }
-
+document.addEventListener("DOMContentLoaded", () => {
   initGSAP();
   CampusGallery.initHeroCanvas();
   initVideo();
   initMobileNav();
   initHeaderScroll();
+  void (async () => {
+    const { loggedIn, user } = await CampusGallery.checkSession();
+    const navLogin = document.getElementById("navLoginLink");
+    if (loggedIn && navLogin) {
+      navLogin.textContent = user.role === "admin" ? "Dashboard" : "My Space";
+      navLogin.href = user.role === "admin"
+        ? "/admin/dashboard.html"
+        : "/friend/dashboard.html";
+    }
+  })();
 });
 
 // ══════════════════════════════════════════════════════════════

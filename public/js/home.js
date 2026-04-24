@@ -4,38 +4,26 @@
 //           infinite scroll band, header scroll, mobile nav
 // ============================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
-
-  // ── 1. Update nav login link if already logged in ─────────
-  const { loggedIn, user } = await CampusGallery.checkSession();
-  const navLoginLink = document.getElementById("navLoginLink");
-  if (loggedIn && navLoginLink) {
-    navLoginLink.textContent = user.role === "admin" ? "Dashboard" : "My Space";
-    navLoginLink.href = user.role === "admin"
-      ? "/admin/dashboard.html"
-      : "/friend/dashboard.html";
-  }
-
-  // ── 2. Hero Canvas — animated floating orbs/shapes ────────
+document.addEventListener("DOMContentLoaded", () => {
+  // Run motion and canvas immediately; do not wait on /api/auth/me (that caused a
+  // static light flash and delayed GSAP on full page navigation).
   CampusGallery.initHeroCanvas();
-
-  // ── 3. GSAP Animations ────────────────────────────────────
   initGSAP();
-
-  // ── 4. Picture of the Day ─────────────────────────────────
-  loadPictureOfDay();
-
-  // ── 5. Infinite Scroll Band ───────────────────────────────
-  loadScrollBand();
-
-  // ── 6. Header shrink on scroll ────────────────────────────
   initHeaderScroll();
-
-  // ── 7. Mobile nav ─────────────────────────────────────────
   initMobileNav();
-
-  // ── 8. Photo count pill ───────────────────────────────────
-  loadPhotoCount();
+  void loadPictureOfDay();
+  void loadScrollBand();
+  void loadPhotoCount();
+  void (async () => {
+    const { loggedIn, user } = await CampusGallery.checkSession();
+    const navLoginLink = document.getElementById("navLoginLink");
+    if (loggedIn && navLoginLink) {
+      navLoginLink.textContent = user.role === "admin" ? "Dashboard" : "My Space";
+      navLoginLink.href = user.role === "admin"
+        ? "/admin/dashboard.html"
+        : "/friend/dashboard.html";
+    }
+  })();
 });
 
 

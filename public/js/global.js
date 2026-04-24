@@ -35,7 +35,8 @@ function toggleTheme() {
   applyTheme(current === "dark" ? "light" : "dark");
 }
 
-// Run theme on page load (before anything renders to avoid flash)
+// Theme is set early via inline <head> script to avoid a light/dark flash; sync
+// localStorage, aria-label, and toggle icon when this script runs.
 initTheme();
 
 // Attach toggle listener once DOM is ready
