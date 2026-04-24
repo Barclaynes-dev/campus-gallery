@@ -50,9 +50,37 @@ document.addEventListener("DOMContentLoaded", () => {
 // ── 2. Service Worker Registration (PWA) ─────────────────────
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
+    const RELOAD_FLAG = "cg-sw-reloaded";
+
+    // Reload once when a new SW takes control so users immediately get fresh JS/CSS.
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (sessionStorage.getItem(RELOAD_FLAG)) return;
+      sessionStorage.setItem(RELOAD_FLAG, "1");
+      window.location.reload();
+    });
+
     navigator.serviceWorker
       .register("/sw.js")
-      .then((reg) => console.log("✅ Service Worker registered:", reg.scope))
+      .then((reg) => {
+        console.log("✅ Service Worker registered:", reg.scope);
+
+        // If an updated worker is already waiting, activate it now.
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
+
+        // Watch for newly installed updates and activate immediately.
+        reg.addEventListener("updatefound", () => {
+          const installing = reg.installing;
+          if (!installing) return;
+
+          installing.addEventListener("statechange", () => {
+            if (installing.state === "installed" && navigator.serviceWorker.controller) {
+              installing.postMessage({ type: "SKIP_WAITING" });
+            }
+          });
+        });
+      })
       .catch((err) => console.warn("⚠️ Service Worker failed:", err));
   });
 }
